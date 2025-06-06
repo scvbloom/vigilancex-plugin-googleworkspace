@@ -6,6 +6,7 @@ import (
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
+	admin "google.golang.org/api/admin/directory/v1"
 	"google.golang.org/api/calendar/v3"
 	"google.golang.org/api/drive/v3"
 	"google.golang.org/api/gmail/v1"
@@ -196,15 +197,19 @@ func getTokenSource(ctx context.Context, d *plugin.QueryData) (oauth2.TokenSourc
 		return nil, errors.New("impersonated_user_email must be configured")
 	}
 
+	//Added only necessary scopes for the Admin SDK Directory service
 	// Authorize the request
 	config, err := google.JWTConfigFromJSON(
 		[]byte(credentialContent),
-		calendar.CalendarReadonlyScope,
-		drive.DriveReadonlyScope,
-		gmail.GmailReadonlyScope,
-		people.ContactsOtherReadonlyScope,
-		people.ContactsReadonlyScope,
-		people.DirectoryReadonlyScope,
+		//calendar.CalendarReadonlyScope,
+		//drive.DriveReadonlyScope,
+		// gmail.GmailReadonlyScope,
+		// people.ContactsOtherReadonlyScope,
+		// people.ContactsReadonlyScope,
+		// people.DirectoryReadonlyScope,
+		admin.AdminDirectoryUserReadonlyScope,
+		admin.AdminDirectoryOrgunitReadonlyScope,
+		admin.AdminDirectoryUserSecurityScope,
 	)
 	if err != nil {
 		return nil, err
@@ -217,4 +222,29 @@ func getTokenSource(ctx context.Context, d *plugin.QueryData) (oauth2.TokenSourc
 	d.ConnectionManager.Cache.Set(cacheKey, ts)
 
 	return ts, nil
+}
+
+func AdminService(ctx context.Context, d *plugin.QueryData) (*admin.Service, error) {
+	// Check if the service is already cached
+	serviceCacheKey := "googleworkspace.admin"
+	if cachedData, ok := d.ConnectionManager.Cache.Get(serviceCacheKey); ok {
+		return cachedData.(*admin.Service), nil
+	}
+
+	// Get session configuration
+	opts, err := getSessionConfig(ctx, d)
+	if err != nil {
+		return nil, err
+	}
+
+	// Create the Admin SDK Directory service
+	svc, err := admin.NewService(ctx, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	// Cache the service
+	d.ConnectionManager.Cache.Set(serviceCacheKey, svc)
+
+	return svc, nil
 }
