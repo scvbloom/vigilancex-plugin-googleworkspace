@@ -210,6 +210,8 @@ func getTokenSource(ctx context.Context, d *plugin.QueryData) (oauth2.TokenSourc
 		admin.AdminDirectoryUserReadonlyScope,
 		admin.AdminDirectoryOrgunitReadonlyScope,
 		admin.AdminDirectoryUserSecurityScope,
+		admin.AdminDirectoryGroupScope,
+		admin.AdminDirectoryGroupMemberScope,
 	)
 	if err != nil {
 		return nil, err

@@ -44,6 +44,8 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"googleworkspace_directory_users":         tableGoogleWorkspaceDirectoryUsers(ctx),
 			"googleworkspace_tokens_list":             tableGoogleWorkspaceTokensList(ctx),
 			"googleworkspace_orgunits":                tableGoogleWorkspaceOrgUnits(ctx),
+			"googleworkspace_groups":                  tableGoogleWorkspaceGroups(ctx),
+			"googleworkspace_group_members":           tableGoogleWorkspaceGroupMembers(ctx),
 		},
 	}
 
