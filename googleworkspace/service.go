@@ -201,12 +201,6 @@ func getTokenSource(ctx context.Context, d *plugin.QueryData) (oauth2.TokenSourc
 	// Authorize the request
 	config, err := google.JWTConfigFromJSON(
 		[]byte(credentialContent),
-		//calendar.CalendarReadonlyScope,
-		//drive.DriveReadonlyScope,
-		// gmail.GmailReadonlyScope,
-		// people.ContactsOtherReadonlyScope,
-		// people.ContactsReadonlyScope,
-		// people.DirectoryReadonlyScope,
 		admin.AdminDirectoryUserReadonlyScope,
 		admin.AdminDirectoryOrgunitReadonlyScope,
 		admin.AdminDirectoryUserSecurityScope,
